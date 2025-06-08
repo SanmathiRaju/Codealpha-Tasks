@@ -1,0 +1,229 @@
+TASK 4
+Hotel Reservation System
+Build a hotel reservation system where users can search for available rooms, make reservations, and view booking details. Include features like room categorization and payment processing.
+Code:
+import java.util.*;
+
+public class HotelReservationSystem {
+
+    static class Room {
+        private int roomNumber;
+        private String category;
+        private double pricePerNight;
+        private boolean isAvailable;
+
+        public Room(int roomNumber, String category, double pricePerNight) {
+            this.roomNumber = roomNumber;
+            this.category = category;
+            this.pricePerNight = pricePerNight;
+            this.isAvailable = true;
+        }
+
+        public int getRoomNumber() {
+            return roomNumber;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public double getPricePerNight() {
+            return pricePerNight;
+        }
+
+        public boolean isAvailable() {
+            return isAvailable;
+        }
+
+        public void setAvailable(boolean available) {
+            isAvailable = available;
+        }
+
+        @Override
+        public String toString() {
+            return "Room #" + roomNumber + " (" + category + ") - $" + pricePerNight + "/night - " +
+                    (isAvailable ? "Available" : "Booked");
+        }
+    }
+
+    static class Reservation {
+        private Room room;
+        private String guestName;
+        private int nights;
+        private double totalPrice;
+
+        public Reservation(Room room, String guestName, int nights) {
+            this.room = room;
+            this.guestName = guestName;
+            this.nights = nights;
+            this.totalPrice = room.getPricePerNight() * nights;
+        }
+
+        public String getDetails() {
+            return "Reservation for " + guestName + " in Room #" + room.getRoomNumber() +
+                    " (" + room.getCategory() + ") for " + nights + " night(s). Total: $" + totalPrice;
+        }
+    }
+
+    static class Hotel {
+        private List<Room> rooms;
+        private List<Reservation> reservations;
+
+        public Hotel() {
+            rooms = new ArrayList<>();
+            reservations = new ArrayList<>();
+            seedRooms();
+        }
+
+        private void seedRooms() {
+            rooms.add(new Room(101, "Single", 50));
+            rooms.add(new Room(102, "Double", 80));
+            rooms.add(new Room(103, "Suite", 150));
+            rooms.add(new Room(104, "Deluxe", 200));
+        }
+
+        public void displayAvailableRooms() {
+            boolean found = false;
+            for (Room room : rooms) {
+                if (room.isAvailable()) {
+                    System.out.println(room);
+                    found = true;
+                }
+            }
+            if (!found) {
+                System.out.println("❌ No rooms available.");
+            }
+        }
+
+        public Room findRoomByNumber(int roomNumber) {
+            for (Room room : rooms) {
+                if (room.getRoomNumber() == roomNumber) return room;
+            }
+            return null;
+        }
+
+        public void makeReservation(int roomNumber, String guestName, int nights) {
+            Room room = findRoomByNumber(roomNumber);
+            if (room != null && room.isAvailable()) {
+                Reservation reservation = new Reservation(room, guestName, nights);
+                reservations.add(reservation);
+                room.setAvailable(false);
+                System.out.println("✅ Reservation successful!");
+                System.out.println(reservation.getDetails());
+            } else {
+                System.out.println("❌ Room not available or invalid number.");
+            }
+        }
+
+        public void listReservations() {
+            if (reservations.isEmpty()) {
+                System.out.println("No reservations found.");
+                return;
+            }
+            for (Reservation reservation : reservations) {
+                System.out.println(reservation.getDetails());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Hotel hotel = new Hotel();
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\n===== Hotel Reservation System =====");
+            System.out.println("1. View Available Rooms");
+            System.out.println("2. Make a Reservation");
+            System.out.println("3. View All Reservations");
+            System.out.println("0. Exit");
+            System.out.print("Enter your choice: ");
+            while (!scanner.hasNextInt()) {
+                System.out.print("Invalid input. Enter a number: ");
+                scanner.next();
+            }
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    hotel.displayAvailableRooms();
+                    break;
+                case 2:
+                    System.out.print("Enter Room Number: ");
+                    int roomNumber = scanner.nextInt();
+                    scanner.nextLine(); // consume newline
+                    System.out.print("Enter Your Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Number of Nights: ");
+                    int nights = scanner.nextInt();
+                    hotel.makeReservation(roomNumber, name, nights);
+                    break;
+                case 3:
+                    hotel.listReservations();
+                    break;
+                case 0:
+                    System.out.println("👋 Thank you for using the system. Goodbye!");
+                    break;
+                default:
+                    System.out.println("⚠️ Invalid option. Try again.");
+            }
+        } while (choice != 0);
+
+        scanner.close();
+    }
+}
+Output:
+Hotel Reservation System =====
+1. View Available Rooms
+2. Make a Reservation
+3. View All Reservations
+0. Exit
+Enter your choice: 1
+
+Room #101 (Single) - $50.0/night - Available  
+Room #102 (Double) - $80.0/night - Available  
+Room #103 (Suite) - $150.0/night - Available  
+Room #104 (Deluxe) - $200.0/night - Available
+
+===== Hotel Reservation System =====
+1. View Available Rooms
+2. Make a Reservation
+3. View All Reservations
+0. Exit
+Enter your choice: 2
+
+Enter Room Number: 102  
+Enter Your Name: Alice Johnson  
+Enter Number of Nights: 3
+
+✅ Reservation successful!  
+Reservation for Alice Johnson in Room #102 (Double) for 3 night(s). Total: $240.0
+
+===== Hotel Reservation System =====
+1. View Available Rooms
+2. Make a Reservation
+3. View All Reservations
+0. Exit
+Enter your choice: 3
+
+Reservation for Alice Johnson in Room #102 (Double) for 3 night(s). Total: $240.0
+
+===== Hotel Reservation System =====
+1. View Available Rooms
+2. Make a Reservation
+3. View All Reservations
+0. Exit
+Enter your choice: 1
+
+Room #101 (Single) - $50.0/night - Available  
+Room #103 (Suite) - $150.0/night - Available  
+Room #104 (Deluxe) - $200.0/night - Available
+
+===== Hotel Reservation System =====
+1. View Available Rooms
+2. Make a Reservation
+3. View All Reservations
+0. Exit
+Enter your choice: 0
+
+👋 Thank you for using the system. Goodbye!
