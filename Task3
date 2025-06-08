@@ -1,0 +1,67 @@
+TASK 3
+Artificial Intelligence Chatbot
+
+Implement an intelligent chatbot using natural language processing and machine learning for interactive and automated communication.
+Code:
+import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
+
+public class SimpleChatBot {
+
+    private static final Map<String, String> responses = new HashMap<>();
+
+    static {
+        responses.put("hi", "Hello! How can I help you?");
+        responses.put("hello", "Hi there! What can I do for you?");
+        responses.put("how are you", "I'm just a program, but I'm doing great!");
+        responses.put("bye", "Goodbye! Have a great day.");
+        responses.put("what is your name", "I am an AI chatbot created in Java.");
+    }
+
+    public static String getResponse(String input) {
+        String normalizedInput = input.trim().toLowerCase();
+        for (Map.Entry<String, String> entry : responses.entrySet()) {
+            if (normalizedInput.contains(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return "I'm sorry, I didn't understand that. Can you rephrase?";
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("AI Chatbot: Hello! Ask me anything. Type 'bye' to exit.");
+
+        while (true) {
+            System.out.print("You: ");
+            String userInput = scanner.nextLine();
+
+            if (userInput.equalsIgnoreCase("bye")) {
+                System.out.println("AI Chatbot: " + getResponse(userInput));
+                break;
+            }
+
+            String response = getResponse(userInput);
+            System.out.println("AI Chatbot: " + response);
+        }
+
+        scanner.close();
+    }
+}
+Output:
+AI Chatbot: Hello! Ask me anything. Type 'bye' to exit.
+You: Hi
+AI Chatbot: Hello! How can I help you?
+
+You: What is your name?
+AI Chatbot: I am an AI chatbot created in Java.
+
+You: How are you?
+AI Chatbot: I'm just a program, but I'm doing great!
+
+You: Tell me a joke
+AI Chatbot: I'm sorry, I didn't understand that. Can you rephrase?
+
+You: Bye
+AI Chatbot: Goodbye! Have a great day.
