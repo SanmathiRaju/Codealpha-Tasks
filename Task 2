@@ -1,0 +1,250 @@
+TASK 2
+Stock Trading Platform
+Create a simulated stock trading platform with features like market data, buying/selling stocks, and tracking portfolio performance.
+Code:
+import java.util.*;
+
+public class StockTradingPlatform {
+
+    // === Stock Class ===
+    static class Stock {
+        private String symbol;
+        private String name;
+        private double price;
+
+        public Stock(String symbol, String name, double price) {
+            this.symbol = symbol;
+            this.name = name;
+            this.price = price;
+        }
+
+        public String getSymbol() { return symbol; }
+        public String getName() { return name; }
+        public double getPrice() { return price; }
+        public void setPrice(double price) { this.price = price; }
+    }
+
+    // === Market Class ===
+    static class Market {
+        private Map<String, Stock> stocks = new HashMap<>();
+
+        public void addStock(Stock stock) {
+            stocks.put(stock.getSymbol(), stock);
+        }
+
+        public Stock getStock(String symbol) {
+            return stocks.get(symbol.toUpperCase());
+        }
+
+        public void updatePrice(String symbol, double newPrice) {
+            if (stocks.containsKey(symbol.toUpperCase())) {
+                stocks.get(symbol.toUpperCase()).setPrice(newPrice);
+            }
+        }
+
+        public Collection<Stock> getAllStocks() {
+            return stocks.values();
+        }
+    }
+
+    // === Portfolio Class ===
+    static class Portfolio {
+        private Map<String, Integer> holdings = new HashMap<>();
+
+        public void buyStock(String symbol, int quantity) {
+            holdings.put(symbol, holdings.getOrDefault(symbol, 0) + quantity);
+        }
+
+        public void sellStock(String symbol, int quantity) {
+            if (!holdings.containsKey(symbol)) {
+                System.out.println("You don't own this stock.");
+                return;
+            }
+            int current = holdings.get(symbol);
+            if (quantity >= current) {
+                holdings.remove(symbol);
+            } else {
+                holdings.put(symbol, current - quantity);
+            }
+        }
+
+        public Map<String, Integer> getHoldings() {
+            return holdings;
+        }
+    }
+
+    // === Main Program ===
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Market market = new Market();
+        Portfolio portfolio = new Portfolio();
+
+        // Add sample stocks
+        market.addStock(new Stock("AAPL", "Apple Inc.", 150.00));
+        market.addStock(new Stock("GOOGL", "Alphabet Inc.", 2800.00));
+        market.addStock(new Stock("TSLA", "Tesla Inc.", 700.00));
+        market.addStock(new Stock("AMZN", "Amazon.com Inc.", 3300.00));
+
+        boolean running = true;
+
+        while (running) {
+            System.out.println("\n=== Stock Trading Platform ===");
+            System.out.println("1. View Market");
+            System.out.println("2. Buy Stock");
+            System.out.println("3. Sell Stock");
+            System.out.println("4. View Portfolio");
+            System.out.println("5. Update Stock Price");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.println("\n--- Market Data ---");
+                    for (Stock stock : market.getAllStocks()) {
+                        System.out.printf("%s (%s): $%.2f\n", stock.getName(), stock.getSymbol(), stock.getPrice());
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter stock symbol to buy: ");
+                    String buySymbol = scanner.nextLine().toUpperCase();
+                    Stock buyStock = market.getStock(buySymbol);
+                    if (buyStock == null) {
+                        System.out.println("Stock not found.");
+                        break;
+                    }
+                    System.out.print("Enter quantity: ");
+                    int buyQty = scanner.nextInt();
+                    portfolio.buyStock(buySymbol, buyQty);
+                    System.out.println("Bought " + buyQty + " shares of " + buySymbol);
+                    break;
+
+                case 3:
+                    System.out.print("Enter stock symbol to sell: ");
+                    String sellSymbol = scanner.nextLine().toUpperCase();
+                    Stock sellStock = market.getStock(sellSymbol);
+                    if (sellStock == null) {
+                        System.out.println("Stock not found.");
+                        break;
+                    }
+                    System.out.print("Enter quantity: ");
+                    int sellQty = scanner.nextInt();
+                    portfolio.sellStock(sellSymbol, sellQty);
+                    System.out.println("Sold " + sellQty + " shares of " + sellSymbol);
+                    break;
+
+                case 4:
+                    System.out.println("\n--- Your Portfolio ---");
+                    double total = 0;
+                    for (Map.Entry<String, Integer> entry : portfolio.getHoldings().entrySet()) {
+                        Stock s = market.getStock(entry.getKey());
+                        if (s != null) {
+                            double value = s.getPrice() * entry.getValue();
+                            total += value;
+                            System.out.printf("%s: %d shares @ $%.2f = $%.2f\n",
+                                    s.getSymbol(), entry.getValue(), s.getPrice(), value);
+                        }
+                    }
+                    System.out.printf("Total Portfolio Value: $%.2f\n", total);
+                    break;
+
+                case 5:
+                    System.out.print("Enter stock symbol to update: ");
+                    String updateSymbol = scanner.nextLine().toUpperCase();
+                    System.out.print("Enter new price: ");
+                    double newPrice = scanner.nextDouble();
+                    market.updatePrice(updateSymbol, newPrice);
+                    System.out.println("Updated price of " + updateSymbol + " to $" + newPrice);
+                    break;
+
+                case 6:
+                    running = false;
+                    System.out.println("Exiting. Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Invalid option. Try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
+Output:
+Stock Trading Platform ===
+1. View Market
+2. Buy Stock
+3. Sell Stock
+4. View Portfolio
+5. Update Stock Price
+6. Exit
+Choose an option: 1
+
+--- Market Data ---
+Apple Inc. (AAPL): $150.00
+Alphabet Inc. (GOOGL): $2800.00
+Tesla Inc. (TSLA): $700.00
+Amazon.com Inc. (AMZN): $3300.00
+
+=== Stock Trading Platform ===
+1. View Market
+2. Buy Stock
+3. Sell Stock
+4. View Portfolio
+5. Update Stock Price
+6. Exit
+Choose an option: 2
+Enter stock symbol to buy: AAPL
+Enter quantity: 5
+Bought 5 shares of AAPL
+
+=== Stock Trading Platform ===
+1. View Market
+2. Buy Stock
+3. Sell Stock
+4. View Portfolio
+5. Update Stock Price
+6. Exit
+Choose an option: 4
+
+--- Your Portfolio ---
+AAPL: 5 shares @ $150.00 = $750.00
+Total Portfolio Value: $750.00
+
+=== Stock Trading Platform ===
+1. View Market
+2. Buy Stock
+3. Sell Stock
+4. View Portfolio
+5. Update Stock Price
+6. Exit
+Choose an option: 5
+Enter stock symbol to update: AAPL
+Enter new price: 160
+Updated price of AAPL to $160.0
+
+=== Stock Trading Platform ===
+1. View Market
+2. Buy Stock
+3. Sell Stock
+4. View Portfolio
+5. Update Stock Price
+6. Exit
+Choose an option: 4
+
+--- Your Portfolio ---
+AAPL: 5 shares @ $160.00 = $800.00
+Total Portfolio Value: $800.00
+
+=== Stock Trading Platform ===
+1. View Market
+2. Buy Stock
+3. Sell Stock
+4. View Portfolio
+5. Update Stock Price
+6. Exit
+Choose an option: 6
+Exiting. Goodbye!
