@@ -1,0 +1,58 @@
+TASK 1
+
+Student Grade Tracker
+
+Develop a program that allows a teacher to enter students' grades and compute their average, highest, and lowest scores. You can use arrays or ArrayLists to store the student data.
+code:import java.util.ArrayList;
+import java.util.Scanner;
+
+public class StudentGradeTracker {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Integer> grades = new ArrayList<>();
+
+        System.out.print("Enter the number of students: ");
+        int numStudents = scanner.nextInt();
+
+        for (int i = 0; i < numStudents; i++) {
+            System.out.print("Enter grade for student " + (i + 1) + ": ");
+            int grade = scanner.nextInt();
+            grades.add(grade);
+        }
+
+        int sum = 0;
+        int highest = grades.get(0);
+        int lowest = grades.get(0);
+
+        for (int grade : grades) {
+            sum += grade;
+            if (grade > highest) {
+                highest = grade;
+            }
+            if (grade < lowest) {
+                lowest = grade;
+            }
+        }
+
+        double average = (double) sum / grades.size();
+
+        System.out.println("\n--- Grade Summary ---");
+        System.out.println("Average Grade: " + average);
+        System.out.println("Highest Grade: " + highest);
+        System.out.println("Lowest Grade: " + lowest);
+
+        scanner.close();
+    }
+}
+Output
+Enter the number of students: 5
+Enter grade for student 1: 78
+Enter grade for student 2: 85
+Enter grade for student 3: 92
+Enter grade for student 4: 67
+Enter grade for student 5: 74
+
+--- Grade Summary ---
+Average Grade: 79.2
+Highest Grade: 92
+Lowest Grade: 67
